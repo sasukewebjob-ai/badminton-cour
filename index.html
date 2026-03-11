@@ -1108,7 +1108,7 @@
         let people = [];
         let courts = [];   // {id, name, max, wide, pids:[], pairs:[[pidA,pidB],...]}
         let guests = [];
-        let sel = null;     // selected person id for tap-assign
+        let sel = [];       // selected person ids for tap-assign (multiple)
         let pairSel = null; // selected person id for pairing (within court)
         let currentPreset = 0;
 
@@ -1161,7 +1161,7 @@
             removePidFromAllCourts(pid);
             const p = findPerson(pid);
             if (p) p.courtId = null;
-            sel = null;
+            sel = [];
             clearPairSel();
             render();
         }
@@ -1180,7 +1180,7 @@
         function resetAll() {
             [...people, ...guests].forEach(p => p.courtId = null);
             courts.forEach(c => { c.pids = []; c.pairs = []; });
-            sel = null;
+            sel = [];
             clearPairSel();
             render();
         }
@@ -1247,7 +1247,7 @@
             removePidFromAllCourts(pid);
             p.courtId = null;
             p.absent = true;
-            sel = null;
+            sel = [];
             clearPairSel();
             render();
         }
@@ -1354,7 +1354,7 @@
             const d = document.createElement('div');
             d.className = `chip ${g}`;
             d.dataset.id = p.id;
-            if (sel === p.id) d.classList.add('selected');
+            if (sel.includes(p.id)) d.classList.add('selected');
             // 男性・女性のみ欠席ボタンを表示（ゲストは対象外）
             const absBtn = (!forceGender && (p.gender === 'male' || p.gender === 'female'))
                 ? `<button class="abs-btn to-absent" title="欠席">✕</button>`
@@ -1463,7 +1463,7 @@
             const d = document.createElement('div');
             d.className = `cmem ${g}`;
             d.dataset.id = p.id;
-            if (sel === p.id) d.classList.add('selected');
+            if (sel.includes(p.id)) d.classList.add('selected');
             if (pairSel === p.id) d.classList.add('selected');
             d.innerHTML = `<div class="av">${p.name.charAt(0)}</div><div class="cn">${p.name}</div><button class="delbtn">✕</button>`;
             d.querySelector('.delbtn').addEventListener('click', e => { e.stopPropagation(); removeFromCourt(p.id); });
@@ -1516,23 +1516,56 @@
         // ── TAP INTERACTIONS ──────────────────────────────────
         function onPoolClick(pid) {
             clearPairSel();
-            sel = sel === pid ? null : pid;
+            // 複数選択: トグル
+            const idx = sel.indexOf(pid);
+            if (idx >= 0) {
+                sel.splice(idx, 1);
+            } else {
+                sel.push(pid);
+            }
             refreshSelection();
+            // 選択人数を表示
+            if (sel.length > 0) {
+                toast(`${sel.length}名選択中 → コートをタップで割当`);
+            }
         }
 
         function onCourtClick(courtId, e) {
             if (e.target.closest('.cmem') || e.target.closest('.pair-group')) return;
-            if (sel && !courts.find(c => c.id === courtId)?.pids.includes(sel)) {
-                if (assign(sel, courtId)) { sel = null; render(); }
+            if (sel.length > 0) {
+                let count = 0;
+                const toAssign = [...sel];
+                toAssign.forEach(pid => {
+                    if (!courts.find(c => c.id === courtId)?.pids.includes(pid)) {
+                        if (assign(pid, courtId)) count++;
+                    }
+                });
+                if (count > 0) {
+                    sel = [];
+                    render();
+                    toast(`${count}名を割り当てました！`);
+                }
             }
         }
 
         function onCourtMemClick(pid, courtId) {
-            // If we have a pool selection, assign to this court
-            if (sel && sel !== pid && !courts.find(c => c.id === courtId)?.pids.includes(sel)) {
-                if (assign(sel, courtId)) { sel = null; render(); return; }
+            // If we have pool selections, assign to this court
+            if (sel.length > 0) {
+                let count = 0;
+                const toAssign = [...sel];
+                toAssign.forEach(spid => {
+                    if (!courts.find(c => c.id === courtId)?.pids.includes(spid)) {
+                        if (assign(spid, courtId)) count++;
+                    }
+                });
+                if (count > 0) {
+                    sel = [];
+                    render();
+                    toast(`${count}名を割り当てました！`);
+                    return;
+                }
             }
-            sel = null;
+            sel = [];
 
             // Pair mode: if same court, pair them
             const court = courts.find(c => c.id === courtId);
@@ -1568,7 +1601,7 @@
 
         function refreshSelection() {
             document.querySelectorAll('[data-id]').forEach(el => {
-                const isSelected = el.dataset.id === sel || el.dataset.id === pairSel;
+                const isSelected = sel.includes(el.dataset.id) || el.dataset.id === pairSel;
                 el.classList.toggle('selected', isSelected);
             });
         }
