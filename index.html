@@ -1206,7 +1206,7 @@
                 ...RAW.female.map(name => ({ id: 'm' + (n++), name, gender: 'female', courtId: null, absent: false }))
             ];
             courts = PRESETS[0].map((p, i) => ({ id: 'c' + i, name: p.name, max: p.max, wide: p.wide, pids: [], pairs: [] }));
-            guests = [1, 2, 3].map(i => ({ id: 'g' + i, name: '', enabled: false, courtId: null }));
+            guests = [1, 2].map(i => ({ id: 'g' + i, name: '', enabled: false, courtId: null }));
         }
 
         function findPerson(id) { return people.find(p => p.id === id) || guests.find(g => g.id === id); }
@@ -1420,7 +1420,7 @@
                 d.className = `chip absent-chip ${g}`;
                 d.dataset.id = p.id;
                 const returnBtn = `<button class="abs-btn to-return" title="復帰">↩</button>`;
-                d.innerHTML = `<div class="av">${p.name.charAt(0)}</div><div class="cn">${p.name}</div>${returnBtn}`;
+                d.innerHTML = `<div class="cn">${p.name}</div>${returnBtn}`;
                 d.querySelector('.abs-btn').addEventListener('click', e => {
                     e.stopPropagation();
                     markPresent(p.id);
@@ -1446,7 +1446,7 @@
             const absBtn = (!forceGender && (p.gender === 'male' || p.gender === 'female'))
                 ? `<button class="abs-btn to-absent" title="欠席">✕</button>`
                 : '';
-            d.innerHTML = `<div class="av">${p.name.charAt(0)}</div><div class="cn">${p.name}</div>${absBtn}<div class="dh">⠿</div>`;
+            d.innerHTML = `<div class="cn">${p.name}</div>${absBtn}<div class="dh">⠿</div>`;
             const absBtnEl = d.querySelector('.abs-btn');
             if (absBtnEl) {
                 absBtnEl.addEventListener('click', e => {
@@ -1552,7 +1552,7 @@
             d.dataset.id = p.id;
             if (sel.includes(p.id)) d.classList.add('selected');
             if (pairSel === p.id) d.classList.add('selected');
-            d.innerHTML = `<div class="av">${p.name.charAt(0)}</div><div class="cn">${p.name}</div><button class="delbtn">✕</button>`;
+            d.innerHTML = `<div class="cn">${p.name}</div><button class="delbtn">✕</button>`;
             d.querySelector('.delbtn').addEventListener('click', e => { e.stopPropagation(); removeFromCourt(p.id); });
             d.addEventListener('click', e => {
                 if (!e.target.classList.contains('delbtn')) onCourtMemClick(p.id, courtId);
