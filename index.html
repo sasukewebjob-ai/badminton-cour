@@ -16,18 +16,18 @@
         }
 
         :root {
-            --bg: #0b1120;
-            --surface: #111827;
-            --surface2: #1c2840;
-            --border: #2d3f5a;
-            --accent: #10b981;
-            --accent2: #059669;
-            --male: #4f9ef8;
-            --female: #f472b6;
-            --guest: #fbbf24;
-            --text: #e2e8f0;
-            --muted: #6b8cae;
-            --red: #f87171;
+            --bg: #f0f4f8;
+            --surface: #ffffff;
+            --surface2: #e8eef4;
+            --border: #c8d6e0;
+            --accent: #059669;
+            --accent2: #047857;
+            --male: #2563eb;
+            --female: #db2777;
+            --guest: #d97706;
+            --text: #1e293b;
+            --muted: #64748b;
+            --red: #dc2626;
             --absent: #94a3b8;
         }
 
@@ -41,7 +41,7 @@
 
         /* ── Header ── */
         .header {
-            background: linear-gradient(135deg, #0b1120, #1a2848, #0f2535);
+            background: linear-gradient(135deg, #ffffff, #e8f5f0, #f0f9ff);
             border-bottom: 1px solid var(--border);
             padding: 14px 18px;
             display: flex;
@@ -50,7 +50,7 @@
             position: sticky;
             top: 0;
             z-index: 200;
-            box-shadow: 0 4px 24px #00000088;
+            box-shadow: 0 2px 12px #00000012;
         }
 
         .logo {
@@ -69,7 +69,7 @@
             font-size: 18px;
             font-weight: 900;
             margin-left: 12px;
-            background: linear-gradient(to right, #10b981, #60a5fa);
+            background: linear-gradient(to right, #059669, #2563eb);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -177,27 +177,27 @@
         }
 
         .chip.male {
-            border-color: #4f9ef820;
+            border-color: #2563eb30;
         }
 
         .chip.female {
-            border-color: #f472b620;
+            border-color: #db277730;
         }
 
         .chip.guest {
-            border-color: #fbbf2420;
+            border-color: #d9770630;
         }
 
         .chip:hover {
             transform: translateX(2px);
             border-color: var(--accent);
-            background: #10b98114;
+            background: #05966914;
         }
 
         .chip.selected {
             border-color: var(--accent);
-            background: #10b98120;
-            box-shadow: 0 0 0 2px #10b98148;
+            background: #05966920;
+            box-shadow: 0 0 0 2px #05966948;
         }
 
         .chip.dragging {
@@ -217,17 +217,17 @@
         }
 
         .male .av {
-            background: #4f9ef820;
+            background: #2563eb18;
             color: var(--male);
         }
 
         .female .av {
-            background: #f472b620;
+            background: #db277718;
             color: var(--female);
         }
 
         .guest .av {
-            background: #fbbf2420;
+            background: #d9770618;
             color: var(--guest);
         }
 
@@ -246,7 +246,7 @@
         .g-section {
             border-top: 1px solid var(--border);
             padding: 12px;
-            background: #fbbf2408;
+            background: #fbbf2410;
         }
 
         .g-row {
@@ -339,15 +339,15 @@
         .pbtn.on {
             border-color: var(--accent);
             color: var(--accent);
-            background: #10b98112;
+            background: #05966912;
         }
 
         .sbtn {
-            background: #6366f118;
+            background: #6366f112;
             border: 1px solid #6366f140;
             border-radius: 6px;
             padding: 5px 11px;
-            color: #818cf8;
+            color: #4f46e5;
             font-size: 11px;
             cursor: pointer;
             transition: all .2s;
@@ -355,13 +355,13 @@
         }
 
         .sbtn:hover {
-            background: #6366f130;
+            background: #6366f120;
         }
 
         .rbtn {
             margin-left: auto;
-            background: #ef444418;
-            border: 1px solid #ef444440;
+            background: #dc262610;
+            border: 1px solid #dc262630;
             border-radius: 6px;
             padding: 5px 11px;
             color: var(--red);
@@ -372,14 +372,14 @@
         }
 
         .rbtn:hover {
-            background: #ef444430;
+            background: #dc262620;
         }
 
         /* ── Absent section ── */
         .absent-section {
             border-top: 1px solid var(--border);
             padding: 12px;
-            background: #94a3b808;
+            background: #94a3b810;
         }
 
         .sec-label.absent {
@@ -410,7 +410,7 @@
         }
 
         .chip.absent-chip .av {
-            background: #94a3b820;
+            background: #94a3b818;
             color: var(--absent);
         }
 
@@ -464,7 +464,7 @@
 
         /* ── Court card ── */
         .card {
-            background: #0c1826;
+            background: #ffffff;
             border: 2px solid var(--border);
             border-radius: 14px;
             display: flex;
@@ -481,7 +481,7 @@
 
         .card.hover {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px #10b98130, inset 0 0 20px #10b98108;
+            box-shadow: 0 0 0 2px #05966930, inset 0 0 20px #05966908;
         }
 
         .card.full {
@@ -490,7 +490,7 @@
 
         .card-head {
             padding: 10px 14px;
-            background: linear-gradient(135deg, var(--surface2), var(--surface));
+            background: linear-gradient(135deg, #e8eef4, #f5f7fa);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -526,12 +526,12 @@
         }
 
         .cnt.ok {
-            background: #10b98120;
+            background: #05966918;
             color: var(--accent);
         }
 
         .cnt.full {
-            background: #ef444420;
+            background: #dc262618;
             color: var(--red);
         }
 
@@ -580,7 +580,7 @@
 
         .cmem:hover {
             border-color: var(--accent);
-            background: #10b98112;
+            background: #05966910;
         }
 
         .cmem.male {
@@ -601,7 +601,7 @@
 
         .cmem.selected {
             border-color: var(--accent);
-            background: #10b98120;
+            background: #05966918;
         }
 
         .delbtn {
@@ -609,7 +609,7 @@
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            background: #ef444420;
+            background: #dc262618;
             color: var(--red);
             border: none;
             cursor: pointer;
@@ -671,7 +671,7 @@
             border-radius: 50%;
             background: #ef4444;
             color: #fff;
-            border: 2px solid #0c1826;
+            border: 2px solid #ffffff;
             cursor: pointer;
             font-size: 10px;
             font-weight: 900;
@@ -712,7 +712,7 @@
             font-weight: 700;
             color: var(--text);
             white-space: nowrap;
-            box-shadow: 0 8px 30px #00000080;
+            box-shadow: 0 8px 30px #00000020;
             transform: rotate(2deg);
             transition: transform .1s;
             min-width: 80px;
@@ -730,7 +730,7 @@
             font-size: 13px;
             z-index: 9998;
             animation: fadeIn .3s;
-            box-shadow: 0 4px 20px #00000060;
+            box-shadow: 0 4px 20px #00000015;
         }
 
         /* ── Pair hint ── */
