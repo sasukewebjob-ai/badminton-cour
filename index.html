@@ -784,6 +784,22 @@
                 flex-direction: column;
             }
 
+            .header {
+                padding: 8px 10px;
+            }
+
+            .logo {
+                width: 28px;
+                height: 28px;
+                font-size: 15px;
+                border-radius: 7px;
+            }
+
+            h1 {
+                font-size: 13px;
+                margin-left: 8px;
+            }
+
             .sidebar {
                 width: 100%;
                 min-width: 0;
@@ -791,50 +807,208 @@
                 border-bottom: 1px solid var(--border);
             }
 
+            .sb-head {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
             .sb-body {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 5px;
-                max-height: 180px;
-                padding: 8px;
+                gap: 3px;
+                max-height: 140px;
+                padding: 5px;
+            }
+
+            .sec-label {
+                font-size: 8px;
+                padding: 3px 2px;
+                gap: 3px;
+            }
+
+            .sec-label::before {
+                width: 5px;
+                height: 5px;
             }
 
             .chip {
                 margin-bottom: 0;
+                padding: 4px 6px;
+                gap: 4px;
+                border-radius: 6px;
             }
 
+            .av {
+                width: 18px;
+                height: 18px;
+                font-size: 8px;
+            }
+
+            .cn {
+                font-size: 10px;
+            }
+
+            .dh {
+                font-size: 10px;
+            }
+
+            .abs-btn {
+                width: 16px;
+                height: 16px;
+                font-size: 7px;
+            }
+
+            /* Guest section */
+            .g-section {
+                padding: 6px 8px;
+            }
+
+            .g-row {
+                gap: 4px;
+                margin-bottom: 3px;
+            }
+
+            .g-toggle {
+                width: 16px;
+                height: 16px;
+            }
+
+            .g-inp {
+                padding: 4px 6px;
+                font-size: 10px;
+            }
+
+            /* Absent section */
+            .absent-section {
+                padding: 6px 8px;
+            }
+
+            .absent-chips {
+                gap: 3px;
+                min-height: 24px;
+            }
+
+            .absent-chips:empty::after {
+                font-size: 9px;
+                padding: 3px;
+            }
+
+            /* Courts area */
             .courts-area {
-                padding: 10px;
+                padding: 6px;
+            }
+
+            .ctrl {
+                gap: 4px;
+            }
+
+            .pl {
+                font-size: 9px;
+            }
+
+            .pbtn, .sbtn, .rbtn {
+                padding: 3px 7px;
+                font-size: 9px;
+                border-radius: 4px;
             }
 
             .grid {
-                gap: 10px;
+                gap: 6px;
             }
 
             .card {
-                min-height: 220px;
+                min-height: 120px;
+                border-radius: 8px;
+                border-width: 1px;
             }
 
             .card.wide {
-                min-height: 240px;
+                min-height: 130px;
             }
 
-            h1 {
-                font-size: 15px;
+            .card-head {
+                padding: 5px 8px;
+                gap: 4px;
+            }
+
+            .cname {
+                font-size: 11px;
+                padding: 1px 2px;
+            }
+
+            .cnt {
+                font-size: 9px;
+                padding: 1px 5px;
+            }
+
+            .card-body {
+                padding: 5px;
+                gap: 3px;
+                min-height: 80px;
+            }
+
+            .drop-hint {
+                font-size: 9px;
+            }
+
+            .drop-hint div:first-child {
+                font-size: 16px;
+                margin-bottom: 2px;
+            }
+
+            /* Court members */
+            .cmem {
+                padding: 3px 6px;
+                gap: 4px;
+                border-radius: 5px;
+            }
+
+            .cmem .av {
+                width: 18px;
+                height: 18px;
+                font-size: 8px;
+            }
+
+            .cmem .cn {
+                font-size: 10px;
+            }
+
+            .delbtn {
+                width: 14px;
+                height: 14px;
+                font-size: 8px;
+            }
+
+            /* Pairs */
+            .pair-connector {
+                width: 20px;
+                min-width: 20px;
+                font-size: 9px;
+            }
+
+            .unpair-btn {
+                width: 18px;
+                height: 18px;
+                font-size: 8px;
+                top: -6px;
+                right: -6px;
             }
 
             .hstats {
                 display: none;
             }
-        }
 
-        @media(max-width:480px) {
-            .grid {
-                grid-template-columns: 1fr;
+            /* Toast & hints */
+            .toast {
+                font-size: 11px;
+                padding: 7px 12px;
+                bottom: 10px;
+                right: 10px;
             }
 
-            .card.wide {
-                grid-column: span 1;
+            .pair-hint {
+                font-size: 11px;
+                padding: 7px 14px;
             }
         }
     </style>
