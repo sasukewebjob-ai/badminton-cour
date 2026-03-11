@@ -863,9 +863,15 @@
                 padding: 6px 8px;
             }
 
-            .g-row {
+            #guestArea {
+                display: flex;
                 gap: 4px;
-                margin-bottom: 3px;
+            }
+
+            .g-row {
+                flex: 1;
+                gap: 3px;
+                margin-bottom: 0;
             }
 
             .g-toggle {
@@ -874,8 +880,9 @@
             }
 
             .g-inp {
-                padding: 4px 6px;
-                font-size: 10px;
+                padding: 3px 4px;
+                font-size: 9px;
+                min-width: 0;
             }
 
             /* Absent section */
