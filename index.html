@@ -358,6 +358,23 @@
             background: #6366f120;
         }
 
+        .savebtn {
+            background: #05966912;
+            border: 1px solid #05966940;
+            border-radius: 6px;
+            padding: 5px 11px;
+            color: var(--accent);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: inherit;
+            font-weight: 700;
+        }
+
+        .savebtn:hover {
+            background: #05966920;
+        }
+
         .rbtn {
             margin-left: auto;
             background: #dc262610;
@@ -913,7 +930,7 @@
                 font-size: 9px;
             }
 
-            .pbtn, .sbtn, .rbtn {
+            .pbtn, .sbtn, .savebtn, .rbtn {
                 padding: 3px 7px;
                 font-size: 9px;
                 border-radius: 4px;
@@ -1145,6 +1162,7 @@
                 <button class="pbtn" data-preset="2" onclick="applyPreset(2)">3コート（12人+6人×2）</button>
                 <button class="pbtn" data-preset="3" onclick="applyPreset(3)">3コート（6人×2+12人）</button>
                 <button class="sbtn" onclick="swapCourts()">🔃 上下入替</button>
+                <button class="savebtn" onclick="saveState(true)">💾 保存</button>
                 <button class="rbtn" onclick="resetAll()">🔄 リセット</button>
             </div>
             <div class="grid" id="grid"></div>
@@ -1198,6 +1216,7 @@
         let sel = [];       // selected person ids for tap-assign (multiple)
         let pairSel = null; // selected person id for pairing (within court)
         let currentPreset = 0;
+        const STORAGE_KEY = 'badminton_court_state_v1';
 
         function initState() {
             let n = 1;
@@ -1207,6 +1226,124 @@
             ];
             courts = PRESETS[0].map((p, i) => ({ id: 'c' + i, name: p.name, max: p.max, wide: p.wide, pids: [], pairs: [] }));
             guests = [1, 2].map(i => ({ id: 'g' + i, name: '', enabled: false, courtId: null }));
+        }
+
+        function updatePresetButtons() {
+            document.querySelectorAll('.pbtn[data-preset]').forEach((b) => {
+                b.classList.toggle('on', b.dataset.preset === String(currentPreset));
+            });
+        }
+
+        function saveState(showToast = false) {
+            try {
+                const payload = {
+                    version: 1,
+                    savedAt: new Date().toISOString(),
+                    currentPreset,
+                    people,
+                    guests,
+                    courts
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                if (showToast) toast('この端末にコート割を保存しました。');
+                return true;
+            } catch (err) {
+                console.error('Save failed:', err);
+                if (showToast) toast('保存に失敗しました。ブラウザの空き容量を確認してください。');
+                return false;
+            }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return false;
+                const saved = JSON.parse(raw);
+                if (!saved || !Array.isArray(saved.people) || !Array.isArray(saved.guests) || !Array.isArray(saved.courts)) {
+                    return false;
+                }
+
+                people = saved.people
+                    .map(p => ({
+                        id: typeof p.id === 'string' ? p.id : '',
+                        name: typeof p.name === 'string' ? p.name : '',
+                        gender: p.gender === 'female' ? 'female' : (p.gender === 'male' ? 'male' : ''),
+                        courtId: typeof p.courtId === 'string' ? p.courtId : null,
+                        absent: !!p.absent
+                    }))
+                    .filter(p => p.id && (p.gender === 'male' || p.gender === 'female'));
+
+                guests = saved.guests
+                    .map(g => ({
+                        id: typeof g.id === 'string' ? g.id : '',
+                        name: typeof g.name === 'string' ? g.name : '',
+                        enabled: !!g.enabled,
+                        courtId: typeof g.courtId === 'string' ? g.courtId : null
+                    }))
+                    .filter(g => g.id.startsWith('g'));
+
+                currentPreset = Number.isInteger(saved.currentPreset) && PRESETS[saved.currentPreset]
+                    ? saved.currentPreset
+                    : 0;
+
+                courts = saved.courts.map((c, i) => ({
+                    id: typeof c.id === 'string' ? c.id : ('c' + i),
+                    name: typeof c.name === 'string' && c.name.trim() ? c.name : ('コート' + (i + 1)),
+                    max: Number.isInteger(c.max) && c.max > 0 ? c.max : 6,
+                    wide: !!c.wide,
+                    pids: Array.isArray(c.pids)
+                        ? [...new Set(c.pids.filter(pid => typeof pid === 'string'))]
+                        : [],
+                    pairs: Array.isArray(c.pairs)
+                        ? c.pairs
+                            .filter(pair =>
+                                Array.isArray(pair) &&
+                                pair.length === 2 &&
+                                typeof pair[0] === 'string' &&
+                                typeof pair[1] === 'string' &&
+                                pair[0] !== pair[1]
+                            )
+                            .map(pair => [pair[0], pair[1]])
+                        : []
+                }));
+
+                if (people.length === 0 || courts.length === 0) return false;
+
+                const validIds = new Set([...people, ...guests].map(p => p.id));
+                const used = new Set();
+                courts.forEach(c => {
+                    c.pids = c.pids.filter(pid => validIds.has(pid) && !used.has(pid)).slice(0, c.max);
+                    c.pids.forEach(pid => used.add(pid));
+                    const pidSet = new Set(c.pids);
+                    c.pairs = c.pairs.filter(([a, b]) => pidSet.has(a) && pidSet.has(b));
+                });
+
+                [...people, ...guests].forEach(p => { p.courtId = null; });
+                courts.forEach(c => {
+                    c.pids.forEach(pid => {
+                        const p = findPerson(pid);
+                        if (p) p.courtId = c.id;
+                    });
+                });
+
+                guests.forEach(g => {
+                    if (!g.enabled || !g.name.trim()) {
+                        g.courtId = null;
+                        courts.forEach(c => {
+                            c.pids = c.pids.filter(pid => pid !== g.id);
+                            c.pairs = c.pairs.filter(pair => !pair.includes(g.id));
+                        });
+                    }
+                });
+
+                sel = [];
+                clearPairSel();
+                updatePresetButtons();
+                return true;
+            } catch (err) {
+                console.error('Load failed:', err);
+                return false;
+            }
         }
 
         function findPerson(id) { return people.find(p => p.id === id) || guests.find(g => g.id === id); }
@@ -1257,9 +1394,7 @@
             currentPreset = i;
             [...people, ...guests].forEach(p => p.courtId = null);
             courts = PRESETS[i].map((p, j) => ({ id: 'c' + j, name: p.name, max: p.max, wide: p.wide, pids: [], pairs: [] }));
-            document.querySelectorAll('.pbtn[data-preset]').forEach((b) => {
-                b.classList.toggle('on', b.dataset.preset === String(i));
-            });
+            updatePresetButtons();
             clearPairSel();
             render();
         }
@@ -1835,6 +1970,9 @@
 
         // ── START ──────────────────────────────────────────────
         initState();
+        if (loadState()) {
+            toast('前回保存したコート割を復元しました。');
+        }
         render();
     </script>
 </body>
