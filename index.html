@@ -1662,7 +1662,7 @@
                 inp.type = 'text'; inp.className = 'g-inp';
                 inp.placeholder = `ゲスト${i + 1}の名前`;
                 inp.value = g.name; inp.disabled = !g.enabled;
-                inp.addEventListener('input', e => { guests[i].name = e.target.value; renderStats(); });
+                inp.addEventListener('input', e => { guests[i].name = e.target.value; renderPool(); renderStats(); });
                 inp.addEventListener('change', () => { if (g.courtId) render(); });
                 row.appendChild(tog); row.appendChild(inp);
                 el.appendChild(row);
