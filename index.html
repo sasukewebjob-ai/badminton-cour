@@ -245,15 +245,18 @@
         /* ── Guest inputs ── */
         .g-section {
             border-top: 1px solid var(--border);
-            padding: 12px;
+            padding: 8px 12px;
             background: #fbbf2410;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .g-row {
             display: flex;
             align-items: center;
-            gap: 7px;
-            margin-bottom: 6px;
+            gap: 5px;
+            flex: 1;
         }
 
         .g-toggle {
@@ -395,30 +398,30 @@
         /* ── Absent section ── */
         .absent-section {
             border-top: 1px solid var(--border);
-            padding: 12px;
+            padding: 6px 12px;
             background: #94a3b810;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .sec-label.absent {
             color: var(--absent);
+            flex-shrink: 0;
         }
 
         .absent-chips {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            min-height: 32px;
+            flex: 1;
+            min-height: 24px;
         }
 
         .absent-chips:empty::after {
             content: '欠席者はいません';
             font-size: 11px;
             color: var(--muted);
-            display: flex;
-            align-items: center;
-            width: 100%;
-            justify-content: center;
-            padding: 6px;
         }
 
         .chip.absent-chip {
@@ -833,8 +836,9 @@
                 display: flex;
                 flex-wrap: wrap;
                 gap: 3px;
-                max-height: 140px;
+                max-height: none;
                 padding: 5px;
+                overflow-y: auto;
             }
 
             .sec-label {
@@ -850,23 +854,23 @@
 
             .chip {
                 margin-bottom: 0;
-                padding: 4px 6px;
-                gap: 4px;
+                padding: 5px 7px;
+                gap: 5px;
                 border-radius: 6px;
             }
 
             .av {
-                width: 18px;
-                height: 18px;
-                font-size: 8px;
+                width: 22px;
+                height: 22px;
+                font-size: 10px;
             }
 
             .cn {
-                font-size: 10px;
+                font-size: 11px;
             }
 
             .dh {
-                font-size: 10px;
+                font-size: 11px;
             }
 
             .abs-btn {
@@ -877,18 +881,12 @@
 
             /* Guest section */
             .g-section {
-                padding: 6px 8px;
-            }
-
-            #guestArea {
-                display: flex;
+                padding: 4px 6px;
                 gap: 4px;
             }
 
             .g-row {
-                flex: 1;
                 gap: 3px;
-                margin-bottom: 0;
             }
 
             .g-toggle {
@@ -904,17 +902,17 @@
 
             /* Absent section */
             .absent-section {
-                padding: 6px 8px;
+                padding: 4px 6px;
+                gap: 4px;
             }
 
             .absent-chips {
                 gap: 3px;
-                min-height: 24px;
+                min-height: 20px;
             }
 
             .absent-chips:empty::after {
                 font-size: 9px;
-                padding: 3px;
             }
 
             /* Courts area */
@@ -1119,6 +1117,60 @@
             from { transform: translateY(100%); }
             to { transform: translateY(0); }
         }
+
+        /* ── Court collapse handle (mobile) ── */
+        .court-handle {
+            display: none;
+        }
+
+        @media(max-width:768px) {
+            .courts-area {
+                transition: max-height 0.3s ease;
+                overflow: hidden;
+            }
+
+            .courts-area.collapsed {
+                max-height: 0 !important;
+                padding: 0 6px;
+                overflow: hidden;
+            }
+
+            .court-handle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 6px;
+                background: linear-gradient(135deg, #e8eef4, #f5f7fa);
+                border-top: 1px solid var(--border);
+                cursor: pointer;
+                touch-action: none;
+                user-select: none;
+            }
+
+            .court-handle .handle-bar {
+                width: 40px;
+                height: 4px;
+                background: var(--border);
+                border-radius: 2px;
+            }
+
+            .court-handle .handle-label {
+                font-size: 10px;
+                color: var(--muted);
+                font-weight: 700;
+            }
+
+            .court-handle .handle-arrow {
+                font-size: 10px;
+                color: var(--muted);
+                transition: transform 0.3s;
+            }
+
+            .court-handle.collapsed .handle-arrow {
+                transform: rotate(180deg);
+            }
+        }
     </style>
 </head>
 
@@ -1141,26 +1193,32 @@
         <aside class="sidebar">
             <!-- Guest section -->
             <div class="g-section">
-                <div class="sec-label guest" style="margin-bottom:8px;">🎟️ ゲスト参加者</div>
-                <div id="guestArea"></div>
+                <div class="sec-label guest" style="flex-shrink:0;">🎟️ ゲスト</div>
+                <div id="guestArea" style="display:flex;gap:4px;flex:1;"></div>
             </div>
             <!-- Absent section -->
             <div class="absent-section">
-                <div class="sec-label absent" style="margin-bottom:8px;">🚫 欠席者</div>
+                <div class="sec-label absent">🚫 欠席者</div>
                 <div class="absent-chips" id="absentArea"></div>
             </div>
             <div class="sb-head">👥 メンバー一覧</div>
             <div class="sb-body" id="pool"></div>
         </aside>
 
+        <!-- Court toggle handle (mobile) -->
+        <div class="court-handle" id="courtHandle" onclick="toggleCourts()">
+            <span class="handle-arrow">▼</span>
+            <span class="handle-label">コートエリア</span>
+            <div class="handle-bar"></div>
+        </div>
+
         <!-- Courts -->
-        <main class="courts-area">
+        <main class="courts-area" id="courtsArea">
             <div class="ctrl">
                 <span class="pl">コート設定:</span>
                 <button class="pbtn on" data-preset="0" onclick="applyPreset(0)">4コート</button>
                 <button class="pbtn" data-preset="1" onclick="applyPreset(1)">2コート（12人）</button>
                 <button class="pbtn" data-preset="2" onclick="applyPreset(2)">3コート（12人+6人×2）</button>
-                <button class="pbtn" data-preset="3" onclick="applyPreset(3)">3コート（6人×2+12人）</button>
                 <button class="sbtn" onclick="swapCourts()">🔃 上下入替</button>
                 <button class="savebtn" onclick="saveState(true)">💾 保存</button>
                 <button class="rbtn" onclick="resetAll()">🔄 リセット</button>
@@ -1194,9 +1252,6 @@
             // 2: 3コート (12人 + 6人×2)
             [{ name: 'コートA（2面）', max: 12, wide: true },
             { name: 'コートB', max: 6, wide: false }, { name: 'コートC', max: 6, wide: false }],
-            // 3: 3コート (6人×2 + 12人)
-            [{ name: 'コートA', max: 6, wide: false }, { name: 'コートB', max: 6, wide: false },
-            { name: 'コートC（2面）', max: 12, wide: true }],
         ];
 
         // ペアの背景色（はっきり区別できる6色）
@@ -1966,6 +2021,24 @@
             t.className = 'toast'; t.textContent = msg;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
+        }
+
+        // ── COURT TOGGLE (mobile) ────────────────────────────
+        let courtsCollapsed = false;
+
+        function toggleCourts() {
+            courtsCollapsed = !courtsCollapsed;
+            const area = document.getElementById('courtsArea');
+            const handle = document.getElementById('courtHandle');
+            if (courtsCollapsed) {
+                area.classList.add('collapsed');
+                handle.classList.add('collapsed');
+                handle.querySelector('.handle-label').textContent = 'コートを表示';
+            } else {
+                area.classList.remove('collapsed');
+                handle.classList.remove('collapsed');
+                handle.querySelector('.handle-label').textContent = 'コートエリア';
+            }
         }
 
         // ── START ──────────────────────────────────────────────
