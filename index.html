@@ -7,6 +7,7 @@
     <title>🏸 バドミントン コート振り分け</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1221,6 +1222,7 @@
                 <button class="pbtn" data-preset="2" onclick="applyPreset(2)">3コート（12人+6人×2）</button>
                 <button class="sbtn" onclick="swapCourts()">🔃 上下入替</button>
                 <button class="savebtn" onclick="saveState(true)">💾 保存</button>
+                <button class="sbtn" onclick="screenshotCourts()" style="background:#6366f1;color:#fff;">📸 撮影</button>
                 <button class="rbtn" onclick="resetAll()">🔄 リセット</button>
             </div>
             <div class="grid" id="grid"></div>
@@ -2021,6 +2023,45 @@
             t.className = 'toast'; t.textContent = msg;
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
+        }
+
+        // ── SCREENSHOT ────────────────────────────────────────
+        function screenshotCourts() {
+            const grid = document.getElementById('grid');
+            if (!grid || grid.children.length === 0) {
+                toast('コートにメンバーを配置してから撮影してください。');
+                return;
+            }
+            toast('📸 撮影中...');
+            html2canvas(grid, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                useCORS: true,
+                logging: false,
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
+                        const file = new File([blob], 'court.png', { type: 'image/png' });
+                        navigator.share({ files: [file], title: 'コート振り分け' }).catch(() => {
+                            downloadBlob(blob);
+                        });
+                    } else {
+                        downloadBlob(blob);
+                    }
+                }, 'image/png');
+            }).catch(() => {
+                toast('撮影に失敗しました。');
+            });
+        }
+
+        function downloadBlob(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'court_' + new Date().toISOString().slice(0, 10) + '.png';
+            a.click();
+            URL.revokeObjectURL(url);
+            toast('📸 保存しました！');
         }
 
         // ── COURT TOGGLE (mobile) ────────────────────────────
