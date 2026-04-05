@@ -2033,12 +2033,30 @@
                 return;
             }
             toast('📸 撮影中...');
+
+            // 一時的にグリッドを広げて見切れを防止
+            const courtsArea = document.getElementById('courtsArea');
+            const body = document.body;
+            const savedOverflowBody = body.style.overflowX;
+            const savedOverflowCourts = courtsArea.style.overflow;
+            const savedMinWidth = grid.style.minWidth;
+            const savedWidth = courtsArea.style.width;
+            body.style.overflowX = 'visible';
+            courtsArea.style.overflow = 'visible';
+            courtsArea.style.width = 'max-content';
+            grid.style.minWidth = '700px';
+
             html2canvas(grid, {
                 backgroundColor: '#ffffff',
                 scale: 2,
                 useCORS: true,
                 logging: false,
+                windowWidth: Math.max(grid.scrollWidth, 700) + 40,
             }).then(canvas => {
+                body.style.overflowX = savedOverflowBody;
+                courtsArea.style.overflow = savedOverflowCourts;
+                courtsArea.style.width = savedWidth;
+                grid.style.minWidth = savedMinWidth;
                 canvas.toBlob(blob => {
                     if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
                         const file = new File([blob], 'court.png', { type: 'image/png' });
@@ -2050,6 +2068,10 @@
                     }
                 }, 'image/png');
             }).catch(() => {
+                body.style.overflowX = savedOverflowBody;
+                courtsArea.style.overflow = savedOverflowCourts;
+                courtsArea.style.width = savedWidth;
+                grid.style.minWidth = savedMinWidth;
                 toast('撮影に失敗しました。');
             });
         }
